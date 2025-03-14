@@ -1,14 +1,13 @@
 
 
 # Tentang Project
+
+<p align="center">
+  <img src="public/images/logo/image-nonwhite.png" alt="Logo" width="auto" height="80">
+</p>
 <br />
 <div align="center">
-  <a href="#">
-    <img src="https://www.qwords.com/wp-content/themes/qwords/assets/images/icons/logo-qw-light.webp" alt="Logo" width="auto" height="80">
-  </a>
-
   <h2 align="center">INTERNSHIP-REGISTER WEB & ADMIN DASHBOARD</h2>
-
   <hr>
 </div>
 
@@ -106,7 +105,9 @@ _Untuk informasi lebih lanjut tentang cara menjalankan proyek Laravel, Anda dapa
 
 
 # Screenshot Interface Landing Page
-![Hero-section](/public/images/screenshot.png)
+<p align="center">
+  <img src="public/images/screenshot.png" alt="Logo" width="auto" >
+</p>
 
 # Credits For Source
 Thanks for tmemplate!
