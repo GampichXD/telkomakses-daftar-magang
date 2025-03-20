@@ -3267,25 +3267,42 @@ Kami merupakan anak perusahaan PT Telkom Indonesia Tbk dan berdiri sejak tanggal
               <h3 class="mb-8 text-2xl font-semibold text-dark dark:text-white md:text-[28px] md:leading-[1.42]">
                 Form Lamaran Magang
               </h3>
-                  <!-- Notifikasi Sukses -->
-    @if(session('success'))
-    <div id="success-notification" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
-        <strong class="font-bold">Sukses!</strong>
-        <span class="block sm:inline">{{ session('success') }}</span>
-    </div>
+                  
+              @if(session('success'))
+              <!-- Notifikasi Sukses -->
+              <div id="success-notification" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
+                  <strong class="font-bold">Sukses!</strong>
+                  <span class="block sm:inline">{{ session('success') }}</span>
+              </div>
+              @else
+              <!-- Notifikasi Gagal -->
+              @if(session('error'))
+              <div id="error-notification" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+                  <strong class="font-bold">Error!</strong>
+                  <span class="block sm:inline">{{ session('error') }}</span>
+              </div>
+              @endif
+              @endif
 
-    {{-- <script>
-        // Script untuk menghilangkan notifikasi setelah 1 detik
-        document.addEventListener('DOMContentLoaded', function () {
-            const notification = document.getElementById('success-notification');
-            if (notification) {
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 3000); // 3000 ms = 3 detik
-            }
-        });
-    </script> --}}
-@endif
+                  {{-- <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const successNotification = document.getElementById('success-notification');
+                        const errorNotification = document.getElementById('error-notification');
+                    
+                        if (successNotification) {
+                            setTimeout(() => {
+                                successNotification.style.display = 'none';
+                            }, 3000); // Hilangkan notifikasi sukses setelah 3 detik
+                        }
+                    
+                        if (errorNotification) {
+                            setTimeout(() => {
+                                errorNotification.style.display = 'none';
+                            }, 3000); // Hilangkan notifikasi error setelah 3 detik
+                        }
+                    });
+                    </script> --}}
+
 
 
               <form action="{{ route('registrasi.store') }}" method="POST" enctype="multipart/form-data">

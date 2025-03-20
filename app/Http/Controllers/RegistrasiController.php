@@ -105,36 +105,32 @@ public function update(Request $request, $id)
     return redirect()->route('admin.registrasis.index')
                      ->with('success', 'Data registrasi berhasil diperbarui.');
 }
-    public function store(Request $request)
-    {
-        // dd('Store method executed'); // Debug apakah method terpanggil
-    
+public function store(Request $request)
+{
+    try {
         // Validasi input
-        try {
-            $request->validate([
-                'NISN_NIM' => 'required|string|max:20|unique:pesertas,NISN_NIM',
-                'Nama' => 'required|string|max:255',
-                'Tingkat' => 'required|in:siswa,mahasiswa',
-                'Sekolah_Universitas' => 'required|string|max:255',
-                'Jenis_Kelamin' => 'required|in:laki-laki,perempuan',
-                'Alamat' => 'required|string',
-                'Email' => 'required|email|max:255|unique:pesertas,Email',
-                'Surat_Resmi_Sekolah' => 'nullable|file|mimes:pdf|max:2048',
-                'ID_Divisi' => 'required|exists:divisis,ID_Divisi',
-                'TanggalMulai' => 'required|date',
-                'TanggalBerakhir' => 'required|date|after_or_equal:TanggalMulai',
-            ]);
-    
-            // dd('Validasi sukses'); // Debug apakah validasi lolos
-    
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // dd($e->errors()); // Debug jika validasi gagal
-        }
-    
+        $validatedData = $request->validate([
+            'NISN_NIM' => 'required|string|max:20|unique:pesertas,NISN_NIM',
+            'Nama' => 'required|string|max:255',
+            'Tingkat' => 'required|in:siswa,mahasiswa',
+            'Sekolah_Universitas' => 'required|string|max:255',
+            'Jenis_Kelamin' => 'required|in:laki-laki,perempuan',
+            'Alamat' => 'required|string',
+            'Email' => 'required|email|max:255|unique:pesertas,Email',
+            'Surat_Resmi_Sekolah' => 'nullable|file|mimes:pdf|max:2048',
+            'ID_Divisi' => 'required|exists:divisis,ID_Divisi',
+            'TanggalMulai' => 'required|date',
+            'TanggalBerakhir' => 'required|date|after_or_equal:TanggalMulai',
+        ]);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Jika validasi gagal, kembalikan pengguna ke halaman sebelumnya dengan pesan error
+        return back()->withErrors($e->errors())->withInput();
+    }
+
+    try {
         // Cek apakah peserta sudah ada
         $peserta = Peserta::where('NISN_NIM', $request->NISN_NIM)->first();
-        // dd($peserta); // Debug apakah peserta ditemukan
-    
+
         if (!$peserta) {
             $peserta = Peserta::create([
                 'NISN_NIM' => $request->NISN_NIM,
@@ -147,26 +143,34 @@ public function update(Request $request, $id)
                 'Kelas_Semester' => $request->Kelas_Semester,
                 'NoHP' => $request->NoHP,
                 'Email' => $request->Email,
-                'Surat_Resmi_Sekolah' => $request->file('Surat_Resmi_Sekolah') ? $request->file('Surat_Resmi_Sekolah')->store('uploads', 'public') : null,
+                'Surat_Resmi_Sekolah' => $request->hasFile('Surat_Resmi_Sekolah')
+                    ? $request->file('Surat_Resmi_Sekolah')->store('uploads', 'public')
+                    : null,
             ]);
-    
-            // dd($peserta); // Debug apakah peserta berhasil dibuat
         }
-    
+
         // Tambahkan data ke tabel `registrasis`
-        $registrasi = Registrasi::create([
+        Registrasi::create([
             'ID_Peserta' => $peserta->ID_Peserta,
             'ID_Divisi' => $request->ID_Divisi,
-            'SuratPengajuan' => $request->file('Surat_Resmi_Sekolah') ? $request->file('Surat_Resmi_Sekolah')->store('uploads', 'public') : null,
+            'SuratPengajuan' => $request->hasFile('Surat_Resmi_Sekolah')
+                ? $request->file('Surat_Resmi_Sekolah')->store('uploads', 'public')
+                : null,
             'TanggalMulai' => $request->TanggalMulai,
             'TanggalBerakhir' => $request->TanggalBerakhir,
             'StatusRegistrasi' => 'pending',
         ]);
-    
-        // dd($registrasi); // Debug apakah registrasi berhasil dibuat
-    
-        return back()->with('success', 'Lamaran berhasil dikirim! Kami akan segera menghubungi Anda.');
+
+        // Redirect kembali dengan anchor #form dan notifikasi sukses
+        return back()->withFragment('form')->with('success', 'Lamaran berhasil dikirim! Kami akan segera menghubungi Anda.');
+    } catch (\Exception $e) {
+        // Log error untuk debugging
+        Log::error('Error occurred: ' . $e->getMessage());
+
+        // Redirect kembali dengan anchor #form dan notifikasi error
+        return back()->withFragment('form')->with('error', 'Terjadi kesalahan saat mengirim lamaran. Silakan coba lagi.');
     }
+}
     public function destroy($id)
 {
     // Cari registrasi berdasarkan ID

@@ -148,13 +148,29 @@ class DivisiController extends Controller
      */
     public function destroy(Divisi $divisi)
     {
-        // Hapus gambar jika ada
-        if ($divisi->Images) {
-            Storage::disk('public')->delete($divisi->Images);
+        try {
+            // Hapus gambar jika ada
+            if ($divisi->Images) {
+                Storage::disk('public')->delete($divisi->Images);
+            }
+    
+            // Hapus data divisi
+            $divisi->delete();
+    
+            // Cek apakah request berasal dari AJAX
+            if (request()->expectsJson()) {
+                return response()->json(['message' => 'Divisi berhasil dihapus.'], 200);
+            }
+    
+            // Redirect jika bukan AJAX
+            return redirect()->route('admin.divisis.index')->with('success', 'Divisi berhasil dihapus.');
+        } catch (\Exception $e) {
+            // Tangani error jika terjadi kesalahan
+            if (request()->expectsJson()) {
+                return response()->json(['message' => 'Gagal menghapus divisi.'], 500);
+            }
+    
+            return redirect()->route('admin.divisis.index')->with('error', 'Gagal menghapus divisi.');
         }
-
-        $divisi->delete();
-
-        return redirect()->route('admin.divisis.index')->with('success', 'Divisi berhasil dihapus.');
     }
 }
