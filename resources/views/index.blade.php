@@ -2018,8 +2018,7 @@ Kami merupakan anak perusahaan PT Telkom Indonesia Tbk dan berdiri sejak tanggal
                   </div>
 
                   <p class="mb-6 text-base text-body-color dark:text-dark-6">
-                    “Our members are so impressed. It's intuitive. It's clean.
-                    It's distraction free. If you're building a community.’’
+                    “Our intern is excels on his job’’
                   </p>
 
                   <a href="#" class="flex items-center gap-4">
